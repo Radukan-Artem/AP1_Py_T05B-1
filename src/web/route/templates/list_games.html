@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+	
+	<script>
+        async function logout() 
+        {   
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+			window.location.href = '/login'
+        }
+		
+		async function join_game(new_id_game) 
+        {   
+            makeRequestWithJWT('get', '/join_game/' + new_id_game).then((result_request) => {
+				this_url = result_request.new_url
+                window.location.href = this_url 
+            })
+        }
+    </script>
+	<button onclick="logout()">Logout</button>
+	
+	<form id='profile_form' method="GET">
+		<button>Profile</button>
+	</form>
+
+
+	<form method="GET" action="/new_game">
+		<button>New game</button>
+	</form>
+	
+	<form method="GET" action="/history_games">
+		<button>History games</button>
+	</form>
+	
+	<form method="GET" action="/list_leaders">
+		<button>List leaders</button>
+	</form>
+
+	<table>
+	<thead>
+		<tr>
+			<th>Сreator id</th>
+			<th>Game id</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody id='body_table_list_games'>
+	</tbody>
+
+	<script defer>
+        window.onload = function() 
+        {
+            makeRequestWithJWT('get', '/get_user_uuid').then((user_info) => {
+                document.getElementById('profile_form').action = "/profile/" + user_info.current_user;
+            })
+			
+			makeRequestWithJWT('get', '/get_list_games').then((result_request) => {
+                list_games = result_request.list_games
+                table_body = document.getElementById('body_table_list_games');
+                var result_body = ''
+                
+                for (let i = 0; i < list_games.length; i++) 
+                {
+                    const item = list_games[i];
+                    
+                    var cell_1 = "<td>" + item["creator"] + "</td>";
+                    var cell_2 = "<td>" + item["id_game"] + "</td>";
+                    var cell_3 = '<td> <button  class="btn" onclick="join_game(' + "'" + item['id_game'] + "'" + ')">Присоединиться</button></td>';
+                    var row = "<tr>" + cell_1 + cell_2 + cell_3 + "</tr>"
+                    result_body += row
+                }
+                table_body.innerHTML = result_body
+            })
+        }
+        
+    </script>
+
+{% endblock %}

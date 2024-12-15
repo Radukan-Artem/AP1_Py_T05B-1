@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic tac toe</title>
+    
+    <script>
+        async function login() 
+        {   
+            username = document.getElementById("login").value;
+            password = document.getElementById("password").value;
+            
+            const options = {
+                                method: 'post', 
+                                headers: {'Content-Type': 'application/json;charset=utf-8'},
+                                body: JSON.stringify({'login': username, 'password': password })
+                            }
+            
+            const response = await fetch('/login', options);
+            const result = await response.json();
+            
+            if (result.error) 
+            {
+                alert('Error: ' + result.error);
+            } 
+            else 
+            {
+                localStorage.setItem('access_token', result["accessToken"]);
+                localStorage.setItem('refresh_token', result["refreshToken"]);
+                window.location.href = '/list_games' 
+            }
+        }
+    </script>
+    
+</head>
+<body>
+	<div >
+		<h3>Login</h3>
+		<div>
+            <div>
+                <input id="login" name="login" placeholder="Your Login">
+            </div>
+            <div>
+                <input id="password" type="password" name="password" placeholder="Your Password">
+            </div>
+            <button onclick="login()">Login</button>
+                
+			<form method="GET" action="/sing_up">
+				<button>Sing up</button>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<script>
+		
+		async function create_new_game(is_online) 
+        {   
+            makeRequestWithJWT('get', '/create_new_game/' + is_online).then((result_request) => {
+				this_url = result_request.new_url
+                window.location.href = this_url 
+            })
+        }
+    </script>
+	
+	<button onclick="create_new_game(false)">VS PC</button>
+	
+	<button onclick="create_new_game(true)">VS Player</button>
+	
+	<form method="GET" action="/list_games">
+		<button>return</button>
+	</form>
+
+{% endblock %}

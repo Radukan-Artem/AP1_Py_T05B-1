@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+	
+	<form method="GET" action="/list_games">
+		<button>Back</button>
+	</form>
+
+	<table>
+	<thead>
+		<tr>
+			<th>ID user</th>
+			<th>Login</th>
+			<th>Count wins</th>
+			<th>Count lose/draw</th>
+		</tr>
+	</thead>
+	<tbody id='body_table_list_leaders'>
+	</tbody>
+
+	<script defer>
+        window.onload = function() 
+        {
+			makeRequestWithJWT('get', '/get_list_leaders/5').then((result_request) => {
+                list_leaders = result_request.list_leaders
+                table_body = document.getElementById('body_table_list_leaders');
+                var result_body = ''
+                
+                for (let i = 0; i < list_leaders.length; i++) 
+                {
+                    const item = list_leaders[i];
+                    
+                    var cell_1 = "<td>" + item["id_user"] + "</td>";
+                    var cell_2 = "<td>" + item["login"] + "</td>";
+                    var cell_3 = "<td>" + item["count_wins"] + "</td>";
+					var cell_4 = "<td>" + item["count_lose_draw"] + "</td>";
+                    var row = "<tr>" + cell_1 + cell_2 + cell_3 + cell_4 + "</tr>"
+                    result_body += row
+                }
+                table_body.innerHTML = result_body
+            })
+        }
+        
+    </script>
+
+{% endblock %}

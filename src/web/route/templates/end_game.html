@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h3>Result game: {{ result_game }}</h3>
+	<form method="GET" action="/list_games">
+		<button>Complete</button>
+	</form>
+
+{% endblock %}

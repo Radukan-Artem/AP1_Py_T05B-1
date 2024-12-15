@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic tac toe</title>
+    <style>
+        .btn {
+            text-align: center;
+            width: 50px;
+            height: 50px;
+        }
+        .field {
+            display: grid;
+            grid-template-columns: repeat(3, 50px); 
+            grid-template-rows: repeat(3, 50px);
+            width: 160px;
+            height: 160px;
+        }
+    </style>
+    <script>
+        setTimeout(function(){
+            location.reload();
+        }, 3000);
+    </script>
+	
+	<script>
+        async function makeRequestWithJWT(new_method, new_url, new_body) 
+        {
+            var options = {
+                method: new_method,
+                headers: 
+                    {
+                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+					'Content-Type': 'application/json;charset=utf-8'
+                    }
+                };
+			
+			if (new_method == "post")
+            {
+                options["body"] = new_body
+            }
+            
+            const response = await fetch(new_url, options);
+            const result = await response.json();
+            
+            if (result.error) 
+            {
+                // alert('Error: ' + result.error);
+                window.location.href = '/login'
+            } 
+            else 
+            {
+                return result
+            }
+        }
+        
+        async function make_move(i, j) 
+        {
+            const uuid_game = window.location.pathname.split('/')[2]
+            makeRequestWithJWT('post', '/game_info/' + uuid_game, JSON.stringify({ 'i': i, 'j': j }));
+            location.reload();
+        }
+    </script>
+	
+</head>
+<body>
+    
+	<h3 id='icon_player_label'></h3>
+	<h3 id='status_game_label'></h3>
+    <div id='game_field' class="field">
+    </div>
+	
+	<script defer>
+        window.onload = function() 
+        {   
+            const uuid_game = window.location.pathname.split('/')[2]
+            makeRequestWithJWT('get', '/game_info/' + uuid_game, JSON.stringify({})).then((result_request) => {
+                game = result_request.game;
+                type_player = result_request.type_player;
+                
+                document.getElementById('icon_player_label').innerHTML = 'Your icons: ' + type_player;
+                document.getElementById('status_game_label').innerHTML = 'Status: ' + game['status'];
+                
+                html_game_field = document.getElementById('game_field');
+                game_field = game['field']['field']
+                var result_htlm_field = ''
+                
+                for (let i = 0; i < game_field.length; i++) 
+                {
+                    for (let j = 0; j < game_field[i].length; j++) 
+                    {
+                        var new_button = '<button  class="btn" type="submit" name="position" onclick="make_move(' + i + ', ' + j + ')">' + game_field[i][j] + '</button>'
+                        result_htlm_field += new_button
+                    }
+                }
+                
+                html_game_field.innerHTML = result_htlm_field
+                
+            })
+            
+        }
+        
+    </script>
+	
+	
+	
+</body>
+</html>

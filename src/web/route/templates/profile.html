@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<h2>user: {{ id_user }}</h2>
+	
+	<h3 id='login_user_label'></h3>
+	<h3 id='count_games_label'></h3>
+	<h3 id='count_wins_label'></h3>
+	<h3 id='count_lose_label'></h3>
+
+	<form method="GET" action="/list_games">
+		<button>return</button>
+	</form>
+	
+	<script defer>
+        window.onload = function() 
+        {   
+            const uuid_profile = window.location.pathname.split('/')[2]
+            makeRequestWithJWT('get', '/profile_info/' + uuid_profile, JSON.stringify({})).then((result_request) => {
+                user_info = result_request.user_info;
+                
+                document.getElementById('login_user_label').innerHTML = 'Login user: ' + user_info['login'];
+				document.getElementById('count_games_label').innerHTML = 'Count games: ' + user_info['count_games'];
+				document.getElementById('count_wins_label').innerHTML = 'Count wins: ' + user_info['count_wins'];
+				document.getElementById('count_lose_label').innerHTML = 'Count lose: ' + user_info['count_lose'];
+                
+                
+            })
+            
+        }
+        
+    </script>
+	
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+	
+	<form method="GET" action="/list_games">
+		<button>Back</button>
+	</form>
+
+	
+	<table>
+	<thead>
+		<tr>
+			<th>Game id</th>
+			<th>Icon user</th>
+			<th>Status game</th>
+		</tr>
+	</thead>
+	<tbody id='body_table_history_games'>
+	</tbody>
+
+	<script defer>
+        window.onload = function() 
+        {
+			makeRequestWithJWT('get', '/get_history_games').then((result_request) => {
+                list_games = result_request.list_games
+                table_body = document.getElementById('body_table_history_games');
+                var result_body = ''
+                
+                for (let i = 0; i < list_games.length; i++) 
+                {
+                    const item = list_games[i];
+                    
+                    var cell_1 = "<td>" + item["id_game"] + "</td>";
+                    var cell_2 = "<td>" + item["icon_user"] + "</td>";
+                    var cell_3 = "<td>" + item["status_game"] + "</td>";
+                    var row = "<tr>" + cell_1 + cell_2 + cell_3 + "</tr>"
+                    result_body += row
+                }
+                table_body.innerHTML = result_body
+            })
+        }
+        
+    </script>
+
+{% endblock %}
